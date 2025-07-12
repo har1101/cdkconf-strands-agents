@@ -1,0 +1,103 @@
+type Review {
+  reviewId: String!
+  timestamp: String!
+  status: ReviewStatus!
+  awsAccountId: String!
+  region: String!
+  pillar: String
+  findings: [Finding]
+  score: Float
+  recommendations: [Recommendation]
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Finding {
+  id: String!
+  pillar: String!
+  title: String!
+  description: String!
+  severity: Severity!
+  resourceArn: String
+  service: String
+}
+
+type Recommendation {
+  id: String!
+  title: String!
+  description: String!
+  priority: Priority!
+  effort: String!
+  implementationGuide: String
+  links: [String]
+}
+
+enum ReviewStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+}
+
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+type Query {
+  getReview(reviewId: String!): Review
+  listReviews(limit: Int, nextToken: String): ReviewConnection
+  getReviewsByStatus(status: ReviewStatus!, limit: Int, nextToken: String): ReviewConnection
+}
+
+type Mutation {
+  updateReview(input: UpdateReviewInput!): Review
+  updateReviewStatus(reviewId: String!, status: ReviewStatus!): Review
+}
+
+type Subscription {
+  onReviewUpdated(reviewId: String): Review
+    @aws_subscribe(mutations: ["updateReview", "updateReviewStatus"])
+}
+
+type ReviewConnection {
+  items: [Review]
+  nextToken: String
+}
+
+input UpdateReviewInput {
+  reviewId: String!
+  status: ReviewStatus
+  findings: [FindingInput]
+  score: Float
+  recommendations: [RecommendationInput]
+}
+
+input FindingInput {
+  id: String!
+  pillar: String!
+  title: String!
+  description: String!
+  severity: Severity!
+  resourceArn: String
+  service: String
+}
+
+input RecommendationInput {
+  id: String!
+  title: String!
+  description: String!
+  priority: Priority!
+  effort: String!
+  implementationGuide: String
+  links: [String]
+}

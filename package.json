@@ -1,0 +1,38 @@
+{
+  "name": "cdkconf-strands-agents",
+  "version": "0.1.0",
+  "bin": {
+    "cdkconf-strands-agents": "bin/cdkconf-strands-agents.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk",
+    "synth": "cdk synth",
+    "deploy": "cdk deploy"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.5",
+    "@types/node": "20.14.11",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "~5.5.3",
+    "aws-cdk": "^2.179.0",
+    "cdk-nag": "^2.32.2",
+    "ts-node": "^10.9.1"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.179.0",
+    "constructs": "^10.0.0",
+    "@aws-solutions-constructs/aws-cloudfront-s3": "^2.77.0",
+    "@aws-solutions-constructs/aws-wafwebacl-cloudfront": "^2.77.0",
+    "@aws-solutions-constructs/aws-apigateway-lambda": "^2.77.0",
+    "@aws-solutions-constructs/aws-lambda-sqs": "^2.77.0",
+    "@aws-solutions-constructs/aws-sqs-lambda": "^2.77.0",
+    "@aws-solutions-constructs/aws-lambda-dynamodb": "^2.77.0",
+    "@aws-solutions-constructs/aws-wafwebacl-appsync": "^2.77.0",
+    "@cdklabs/generative-ai-cdk-constructs": "^0.1.278",
+    "source-map-support": "^0.5.21"
+  }
+}
