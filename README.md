@@ -26,7 +26,11 @@ AWS CDKで構築されたサーバーレスプラットフォームです。AI�
 
 ## アーキテクチャ図
 
-![alt text](image.png)
+![AWS Well-Architected Review Platform Architecture](generated-diagrams/strands-agents-architecture.png)
+
+詳細なアーキテクチャ図は以下のファイルからも確認できます：
+- [改良版レイアウト (Draw.io)](strands-agents-architecture-improved.drawio)
+- [AWS公式アイコン版 (Draw.io)](strands-agents-aws-icons.drawio)
 
 ## 機能
 
@@ -36,6 +40,8 @@ AWS CDKで構築されたサーバーレスプラットフォームです。AI�
 - 🔒 **セキュリティファースト**: KMS暗号化、WAF保護、IAMベストプラクティス
 - 📈 **スケーラブル設計**: 自動スケールするサーバーレスアーキテクチャ
 - 🔍 **詳細な発見事項**: 実行可能な推奨事項を含む包括的な分析
+- 🎨 **モダンなWebUI**: React + Viteで構築されたレスポンシブなフロントエンド
+- 🔄 **リアルタイム同期**: Apollo ClientとGraphQL Subscriptionsによる即座のUI更新
 
 ## クイックスタート
 
@@ -48,11 +54,19 @@ AWS CDKで構築されたサーバーレスプラットフォームです。AI�
 ### インストール
 
 ```bash
-# クローンと依存関係のインストール
+# CDKプロジェクトの依存関係をインストール
 npm install
 
 # TypeScriptコードのビルド
 npm run build
+
+# フロントエンドの依存関係をインストール
+cd frontend
+npm install
+
+# フロントエンドをビルド
+npm run build
+cd ..
 
 # スタックのデプロイ
 npm run deploy
@@ -71,8 +85,17 @@ npm run deploy
 デプロイ後、3つの重要なURLが提供されます：
 
 1. **CloudFront URL**: レビュー開始のためのWebインターフェース
-2. **API Gateway URL**: プログラマティックアクセス用REST API
+2. **API Gateway URL**: プログラマティックアクセス用REST API  
 3. **AppSync URL**: リアルタイムデータ用GraphQLエンドポイント
+
+### Webインターフェースの使用
+
+1. CloudFront URLにアクセス
+2. 「新しいレビューを開始」ボタンをクリック
+3. AWSアカウントIDとリージョンを入力
+4. オプションで特定のWell-Architectedの柱を選択
+5. レビューの進捗をリアルタイムで監視
+6. AIエージェントによる発見事項と推奨事項を確認
 
 ### レビューの開始
 
@@ -122,6 +145,22 @@ subscription {
 - **recommendations**: AI生成の改善提案
 - **score**: 全体的なアーキテクチャスコア (0-100)
 
+### 発見事項（Finding）
+- **pillar**: Well-Architectedの柱
+- **title**: 発見事項のタイトル
+- **description**: 詳細な説明
+- **severity**: LOW | MEDIUM | HIGH | CRITICAL
+- **resourceArn**: 対象AWSリソース
+- **service**: AWSサービス名
+
+### 推奨事項（Recommendation）
+- **title**: 推奨事項のタイトル
+- **description**: 詳細な説明
+- **priority**: LOW | MEDIUM | HIGH | CRITICAL
+- **effort**: 実装工数の見積もり
+- **implementationGuide**: 実装ガイド
+- **links**: 参考リンク
+
 ### Well-Architected の柱
 - 運用性の優秀性
 - セキュリティ
@@ -130,16 +169,55 @@ subscription {
 - コスト最適化
 - 持続可能性
 
+## プロジェクト構造
+
+```
+cdkconf-strands-agents/
+├── bin/                          # CDKアプリケーションエントリーポイント
+├── lib/
+│   ├── stacks/
+│   │   └── strands-agents-stack.ts    # メインCDKスタック
+│   └── constructs/
+│       ├── frontend-construct.ts       # CloudFront + S3 + WAF
+│       ├── backend-api-construct.ts    # API Gateway + Lambda
+│       ├── appsync-construct.ts        # GraphQL API
+│       ├── ai-agent-construct.ts       # Bedrock Agent
+│       └── async-processing-construct.ts # SQS + Lambda
+├── lambda/
+│   ├── ai-agent/               # Strands Agents SDK Lambda
+│   ├── api-handler/            # REST APIハンドラー
+│   ├── async-processor/        # 非同期処理Lambda
+│   └── layers/strands-agents/  # Lambda Layer
+├── frontend/                   # React + Vite Webアプリケーション
+│   ├── src/
+│   │   ├── components/         # Reactコンポーネント
+│   │   │   ├── ReviewDashboard.tsx
+│   │   │   ├── ReviewForm.tsx
+│   │   │   ├── ReviewList.tsx
+│   │   │   └── ReviewDetails.tsx
+│   │   ├── App.tsx            # メインアプリケーション
+│   │   └── App.css            # スタイルシート
+│   └── dist/                  # ビルド済みファイル
+├── schema.graphql             # GraphQLスキーマ定義
+└── *.drawio                   # アーキテクチャ図
+```
+
 ## 開発
 
 ### 利用可能なスクリプト
 
 ```bash
+# CDKプロジェクト
 npm run build        # TypeScriptのコンパイル
 npm run watch        # 開発用ウォッチモード
 npm run test         # Jestテストの実行
 npm run synth        # CloudFormationの合成
 npm run deploy       # AWSへのデプロイ
+
+# フロントエンド（frontend/ディレクトリ内で実行）
+npm run dev          # 開発サーバーの起動
+npm run build        # プロダクションビルド
+npm run preview      # ビルド結果のプレビュー
 ```
 
 ### テスト
@@ -179,21 +257,30 @@ cdk destroy
 - **VPC**: 該当する場所でのネットワーク分離
 - **CDK Nag**: 自動化されたセキュリティコンプライアンスチェック
 
-## 貢献
+## 技術スタック
 
-1. リポジトリをフォーク
-2. フィーチャーブランチを作成
-3. 変更を実施
-4. テストを実行しCDK Nagが通ることを確認
-5. プルリクエストを提出
+### バックエンド
 
-## ライセンス
+- **AWS CDK**: インフラストラクチャ as Code
+- **AWS Solutions Constructs**: ベストプラクティスパターン
+- **AWS Lambda**: サーバーレス関数
+- **Amazon DynamoDB**: NoSQLデータベース
+- **Amazon SQS**: メッセージキュー
+- **AWS AppSync**: GraphQL API
+- **Amazon Bedrock**: AI/MLサービス
+- **Strands Agents SDK**: AIエージェント開発
 
-このプロジェクトはMITライセンスの下でライセンスされています - 詳細はLICENSEファイルを参照してください。
+### フロントエンド
 
-## サポート
+- **React 19**: UIライブラリ
+- **Vite**: 高速ビルドツール
+- **TypeScript**: 型安全な開発
+- **Apollo Client**: GraphQLクライアント
+- **CSS3**: モダンスタイリング
 
-質問や問題については：
-1. 既存のGitHub issueを確認
-2. 詳細情報を含む新しいissueを作成
-3. CDKバージョンとAWSリージョン情報を含める
+### セキュリティ・監視
+
+- **AWS WAF**: Webアプリケーションファイアウォール
+- **AWS KMS**: 暗号化キー管理
+- **CDK Nag**: セキュリティ検証
+- **CloudWatch**: ログとメトリクス
