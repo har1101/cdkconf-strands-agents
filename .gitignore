@@ -12,7 +12,6 @@ tree.json
 # Build outputs
 dist/
 build/
-lib/
 
 # Logs
 *.log

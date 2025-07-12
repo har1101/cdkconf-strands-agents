@@ -26,7 +26,7 @@ AWS CDKで構築されたサーバーレスプラットフォームです。AI�
 
 ## アーキテクチャ図
 
-![AWS Well-Architected Review Platform Architecture](generated-diagrams/strands-agents-architecture.png)
+![AWS Well-Architected Review Platform Architecture](generated-diagrams/image.png)
 
 詳細なアーキテクチャ図は以下のファイルからも確認できます：
 - [改良版レイアウト (Draw.io)](strands-agents-architecture-improved.drawio)
